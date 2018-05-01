@@ -1,6 +1,7 @@
 import hashlib
 import time
 import sys
+import thread
 from uuid import getnode as get_mac
 
 class Block:
@@ -12,19 +13,24 @@ class Block:
 		self.prev_hash = prev_hash
 		self.hash = self.getBlockHash()
 
-	def __init___(self,index,timestamp,data,prev_hash,hashvalue):
+	def __init__(self,index,timestamp,data,prev_hash,hashvalue):
 		self.index = index
 		self.timestamp = timestamp
 		self.data = data
 		self.prev_hash = prev_hash
 		self.hash = hashvalue
 
+	def __init__(self,data,prev_hash):
+		self.index = 0;
+		self.timestamp = 0;
+		self.data = data
+		self.prev_hash = prev_hash
+		self.hash = self.getBlockHash()
+
 	# This will be the hashing function for our block
 	def getBlockHash(self):
-		sha = hashlib.sha256()
-		sha.update(str(self.index)+str(self.data)+str(self.timestamp)+str(self.prev_hash))
-		return sha.hexdigest()
-
+		return hashlib.sha256(str(self.index)+str(self.data)+str(self.timestamp)+str(self.prev_hash)).hexdigest()
+		
 	def printBlock(self):
 		print "BLOCK #{}".format(self.index)
 		print "Index : {}".format(self.index)
@@ -41,12 +47,12 @@ class Blockchain:
 		self.length = 0
 
 	def populateBlockChain(self):
-		self.blockchain[0] = self.genesisBlockInit()
+		self.blockchain.append(self.genesisBlockInit())
 		self.length = 1
 
 	# The first block, called the genesis block, which will hash our mac address, so you where it originates
 	def genesisBlockInit(self):
-		return Block(0,"Genesis Block",get_mac())
+		return Block("Genesis Block",get_mac())
 
 	def updateBlockChain(self,new_blockchain):
 		self.blockchain = new_blockchain
@@ -56,7 +62,7 @@ class Blockchain:
 		return self.blockchain
 
 	# Get current block function
-	def getCurrBlock(self)
+	def getCurrBlock(self):
 		return self.blockchain[self.length - 1]
 
 	# Appending a block with data parameter onto the chain
