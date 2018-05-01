@@ -27,26 +27,36 @@ def main():
 
 			#Start block_network class
 		elif(cmd == "mine"):
-			ipport =  raw_input("Please list the ip and port of the peer you wish to mine at as ip:port :\n")
-			ipport_list = ipport.split(":")
+			#ipport =  raw_input("Please list the ip and port of the peer you wish to mine at as ip:port :\n")
+			#ipport_list = ipport.split(":")
+			msg = encodeMsg({'type':'client', 'request':'mine','body': str(mineraddr)})
+			sock = socket.create_connection(('127.0.0.1',6000))
+			#sock = socket.create_connection((ipport_list[0],int(ipport_list[1])))
+			sock.sendall(msg)
+			ack = sock.recv(1024)
+			receivedmsg = decodeMsg(ack)['ack']
+			datamsg = receivedmsg['data']
+			print "MINED BLOCK"
+			print "Index:" +  str(receivedmsg['index'])
+			print "Timestamp: " + str(receivedmsg['timestamp'])
+			print "Data: "
+			print "Proof of work: " + str(datamsg['proof_of_work'])
+			print "Transactions: " + str(datamsg['transactions'])
+			print "Hash: " + str(receivedmsg['hash']) + '\n'
 
 			#mine stuff
 		elif(cmd == "transaction"):
 			#ipport =  raw_input("Please list the ip and port of the peer you wish to make a transaction at as ip:port :\n")
 			#ipport_list = ipport.split(":")
-			src = mineraddr
 			dst = raw_input("Enter recipient here: ")
 			amount = raw_input("Enter amount here: ")
 			print ''
-			msg = encodeMsg({'type': 'client','request':'transaction','body': {'from': src, 'to': dst, 'amount': amount}})
+			msg = encodeMsg({'type': 'client','request':'transaction','body': {'from': str(mineraddr), 'to': dst, 'amount': amount}})
 			sock = socket.create_connection(('127.0.0.1',6000))
 			#sock = socket.create_connection((ipport_list[0],int(ipport_list[1])))
 			sock.sendall(msg)
 			ack = sock.recv(1024)
 			print '\n' + str(decodeMsg(ack)['ack'])
-
-
-			#Send transaction to server
 
 		else: continue;
 

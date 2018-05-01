@@ -6,26 +6,15 @@ from uuid import getnode as get_mac
 
 class Block:
 	# This is the constructor for a new block which takes an index, the data, and the hash of a previous block
-	def __init__(self,index,data,prev_hash):
-		self.index = index
-		self.data = data
-		self.timestamp = time.localtime()
-		self.prev_hash = prev_hash
-		self.hash = self.getBlockHash()
-
-	def __init__(self,index,timestamp,data,prev_hash,hashvalue):
+	def __init__(self,index, timestamp, data,prev_hash,copy = False,hashvalue = 0):
 		self.index = index
 		self.timestamp = timestamp
 		self.data = data
 		self.prev_hash = prev_hash
-		self.hash = hashvalue
-
-	def __init__(self,data,prev_hash):
-		self.index = 0;
-		self.timestamp = 0;
-		self.data = data
-		self.prev_hash = prev_hash
-		self.hash = self.getBlockHash()
+		if copy == False:
+			self.hash = self.getBlockHash()
+		else:
+			self.hash = hashvalue
 
 	# This will be the hashing function for our block
 	def getBlockHash(self):
@@ -52,7 +41,7 @@ class Blockchain:
 
 	# The first block, called the genesis block, which will hash our mac address, so you where it originates
 	def genesisBlockInit(self):
-		return Block("Genesis Block",get_mac())
+		return Block(0,0,{'proof_of_work':1, 'transactions':[]},get_mac())
 
 	def updateBlockChain(self,new_blockchain):
 		self.blockchain = new_blockchain
@@ -67,7 +56,9 @@ class Blockchain:
 
 	# Appending a block with data parameter onto the chain
 	def addBlock(self,data):
-		self.blockchain.append(Block(self.blockchain[len - 1].index + 1, data, self.blockchain[len - 1].hash))
+		prev_index = self.blockchain[self.length - 1].index
+		prev_hash = self.blockchain[self.length  - 1].hash
+		self.blockchain.append(Block(prev_index + 1, time.time(),data, prev_hash))
 		self.length += 1
 
 	# Chain validation

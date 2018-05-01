@@ -88,7 +88,18 @@ class kecikNode:
 					return
 
 				elif(commandMsg['request'] == 'mine'):
-					client.send(encodeMsg("OK"))
+					prev_block = self.blockchain.getCurrBlock()
+					prev_proof = prev_block.data['proof_of_work']
+					new_proof = proofOfWork(prev_proof)
+					self.node_transactions.append({'from':'network','to': str(commandMsg['body']),'amount':1})
+					new_block_data = {'proof_of_work': new_proof,'transactions':list(self.node_transactions)}
+					new_block_index = prev_block.index + 1
+					self.node_transactions[:] = []
+					self.blockchain.addBlock(new_block_data)
+					mined_block = self.blockchain.getCurrBlock()
+					msg = {'ack':{'index': new_block_index, 'timestamp': mined_block.timestamp, 'data': new_block_data, 
+								  'prev_hash': mined_block.prev_hash, 'hash': mined_block.hash}}
+					client.send(encodeMsg(msg))
 					client.close()
 					return
 
@@ -172,25 +183,6 @@ def addPeer():
 		port = request.get_json()['port']
 		peer_list.append(str(host + ':' + port))
 		print "Added {} as peer".format(host)
-
-def mine():
-	if(request.method == 'GET'):
-		prev_block = blockchain.getCurrBlock()
-		prev_proof = prev_block.data['proof_of_work']
-		new_proof = proofOfWork(prev_proof)
-		node_transactions.append({'from':'network','to': miner_address,'amount':1})
-		new_block_data = {'proof_of_work': new_proof,'transactions':list(node_transactions)}
-		new_block_index = prev_block.index + 1
-		node_transactions[:] = []
-		blockchain.addBlock(new_block_data)
-		mined_block = blockchain.getCurrBlock()
-		return json.dumps({
-		"index": new_block_index,
-		"timestamp": mined_block.timestamp,
-		"data": new_block_data,
-		"prev_hash" : mined_block.prev_hash,
-		"hash": mined_block.hash
-		}) + '\n'
 
 
 
