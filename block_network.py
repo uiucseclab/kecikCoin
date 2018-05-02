@@ -112,9 +112,9 @@ class kecikNode:
 				for b in self.blockchain.getBlockChain():
 					for t in b.data['transactions']:
 						if t['to'] == userid:
-							coins += t['amount']
+							coins += int(t['amount'])
 						elif t['from'] == userid:
-							coins -= t['amount']
+							coins -= int(t['amount'])
 
 				# Send back desired info
 				msg = {'ack': (coins, len(self.blockchain.blockchain) - 1)}
@@ -163,7 +163,7 @@ class kecikNode:
 				# Add user transaction to list of transactions processed
 				if(commandMsg['request'] == 'transaction'):
 					new_transaction = commandMsg['body']
-					node_transactions.append(new_transaction)
+					self.node_transactions.append(new_transaction)
 					if(self.debug):
 						print "New transaction"
 						print "FROM : {}".format(new_transaction['from'])
