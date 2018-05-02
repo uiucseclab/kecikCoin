@@ -72,7 +72,7 @@ The different commands that you can put into kecikCoinClient console is:
 ----------
 ### 1. Running block_client.py
 ------
-![Screen](demo_pics/Screen Shot 2018-05-02 at 5.25.31 PM.png?raw=true)
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.31%20PM.png)
  
 ## How it Works
 ----------
