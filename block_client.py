@@ -38,7 +38,7 @@ def checkfunds(userid):
 
 
 def mine(mineraddr):
-	ipport =  raw_input("Please list the ip and port of the peer you wish to mine at as ip:port :\n")
+	ipport =  raw_input("\nPlease list the ip and port of the peer you wish to mine at as ip:port :\n")
 	ipport_list = ipport.split(":")
 	msg = encodeMsg({'type':'client', 'request':'mine','body': str(mineraddr)})
 	try:
@@ -51,7 +51,7 @@ def mine(mineraddr):
 	ack = sock.recv(1024)
 	receivedmsg = decodeMsg(ack)['ack']
 	datamsg = receivedmsg['data']
-	print "MINED BLOCK"
+	print "\nMINED BLOCK"
 	print "Index:" +  str(receivedmsg['index'])
 	print "Timestamp: " + str(receivedmsg['timestamp'])
 	print "Data: "
@@ -61,7 +61,7 @@ def mine(mineraddr):
 
 
 def transaction(user):
-	ipport =  raw_input("Please list the ip and port of the peer you wish to make a transaction at as ip:port :\n")
+	ipport =  raw_input("\nPlease list the ip and port of the peer you wish to make a transaction at as ip:port :\n")
 	ipport_list = ipport.split(":")
 	dst = raw_input("Enter recipient here: ")
 	amount = raw_input("Enter amount here: ")
@@ -102,14 +102,14 @@ def main():
 
 	while True:
 
-		cmd = raw_input("kecikCoinClient> ")
+		cmd = raw_input("\nkecikCoinClient> ")
 
 		if(cmd == "exit" or cmd == "quit"):
 			#Close up peer if possible
 			exit(0)
 
 		elif(cmd == "peer"):
-			ipport =  raw_input("Please list the ip and port of the machine you are using as ip:port :\n")
+			ipport =  raw_input("\nPlease list the ip and port of the machine you are using as ip:port :\n")
 			ipport_list = ipport.split(":")
 			#peer = kecikNode('127.0.0.1',6000)
 			peer = kecikNode(ipport_list[0],int(ipport_list[1]))
@@ -124,7 +124,15 @@ def main():
 
 				peer_cmd = raw_input("kecikCoinClient> ")
 
-				if(peer_cmd == "get_blocks"):
+				if(peer_cmd == "debug"):
+					if(peer.debug == False):
+						peer.debug = True
+						print "Network debugging turned on\n"
+					else:
+						peer.debug = False
+						print "Network debugging turned off\n"
+
+				elif(peer_cmd == "get_blocks"):
 					getBlocks()
 					continue
 
@@ -138,7 +146,6 @@ def main():
 
 				elif(peer_cmd == "join"):
 					if(peer.port == 6000):
-					#HANDLE THIS EY
 						print "Port 6000 is the default the introducer peer. Other peers will join you"
 						continue
 					else:

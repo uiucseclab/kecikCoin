@@ -71,7 +71,7 @@ class kecikNode:
 			clientHostName = socket.gethostbyaddr(addr[0])[0]
 
 			#Print out command entries
-			if(self.debug)print >>sys.stderr, "Received message from %s: %s\n" % (addr[0], commandMsg)
+			if(self.debug): print >>sys.stderr, "\nReceived message from %s: %s\n" % (addr[0], commandMsg)
 
 			#if received join command, add to peer list and send blocks
 			if(commandMsg['request'] == 'get_blocks'):
@@ -116,16 +116,17 @@ class kecikNode:
 						new_blockchain.append(Block(b['index'],b['timestamp'],b['data'],b['prev_hash'],copy=True,hashvalue=b['hash']))
 					if self.blockchain.validateChain(new_blockchain) == True:
 						self.blockchain.updateBlockChain(new_blockchain)
-						if(self.debug)print "Updated blockchain with longest chain"
+						if(self.debug): print "Updated blockchain with longest chain"
 					client.close()
 					return
 			elif (commandMsg['type'] == 'client'):
 				if(commandMsg['request'] == 'transaction'):
 					new_transaction = commandMsg['body']
-					print "New transaction"
-					print "FROM : {}".format(new_transaction['from'])
-					print "TO: {}".format(new_transaction['to'])
-					print "AMOUNT: {}".format(new_transaction['amount'])
+					if(self.debug):
+						print "New transaction"
+						print "FROM : {}".format(new_transaction['from'])
+						print "TO: {}".format(new_transaction['to'])
+						print "AMOUNT: {}".format(new_transaction['amount'])
 					client.send(encodeMsg({'ack':"Transaction submission successful"}))
 					client.close()
 					return
@@ -151,7 +152,7 @@ class kecikNode:
 					client.close()
 					return
 
-		print >>sys.stderr, "Unknown command message"
+		if(self.debug): print >>sys.stderr, "Unknown command message"
 		client.close()
 
 
@@ -161,7 +162,7 @@ class kecikNode:
 			self.listener = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 			self.listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			self.listener.bind((self.ip, self.port))
-			print >>sys.stderr,"Starting to listen for commands on port %s"%self.port
+			if(self.debug):print >>sys.stderr,"Starting to listen for commands on port %s"%self.port
 
 		except socket.error as e:
 			raise Exception("Unable to set up listener : %s" %e)
@@ -173,10 +174,10 @@ class kecikNode:
 			clientSock, remoteAddr = self.listener.accept()
 			thread.start_new_thread(self.commandHandler,(clientSock, remoteAddr))
 		self.listener.close()
-		print >>sys.stderr, ("Closing up command listener")
+		if(self.debug):print >>sys.stderr, ("Closing up command listener")
 
 	def consensus(self):
-		print "Starting consensus algorithm"
+		if(self.debug):print "Starting consensus algorithm"
 		longest_chain = self.blockchain.getBlockChain()
 		peer_chains = []
 		for key,peer in self.peers.iteritems():
@@ -203,7 +204,7 @@ class kecikNode:
 
 			if self.blockchain.validateChain(new_blockchain) == True:
 				self.blockchain.updateBlockChain(new_blockchain)
-				print "Update blockchain with longest chain"
+				if(self.debug):print "Update blockchain with longest chain"
 
 		for key,peer in self.peers.iteritems():
 			if key != self.kecik_addr:
