@@ -8,9 +8,10 @@ from Crypto import Random
 import thread
 import hashlib
 
-
+# kecikUser class
 class KecikUser:
 
+	# Constructor that takes in userid
 	def __init__(self,userid):
 		self.id = userid
 		self.coins =  0
@@ -19,16 +20,19 @@ class KecikUser:
 		self.pubkey = keys[1]
 		self.privkey = keys[0]
 
+	# RSA Key generator
 	def publicprivateKeygen(self):
 		random_gen = Random.new().read
 		key = RSA.generate(1024, random_gen)
 		keys = (key, key.publickey().exportKey('PEM'))
 		return keys
 
+	# Signing message with privkey function
 	def sign_msg(self,msg):
 		hashed_msg = hashlib.sha256(str(msg)).hexdigest()
 		return self.privkey.encrypt(hashed_msg,32)
 
+	# Decrypting message with pubkey function
 	def unsign_msg(self,msg,sign,publickey):
 		hashed_msg = hashlib.sha256(str(msg['from']) + str(msg['to']) + str(msg['amount'])).hexdigest()
 		pubkey = RSA.importKey(publickey,passphrase="PEM")
