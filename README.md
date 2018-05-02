@@ -70,11 +70,10 @@ The different commands that you can put into kecikCoinClient console is:
 
 ## Demo Pictures
 ----------
-<ol>
- <li> Running 'python block_client.py'<br>
+Running 'python block_client.py'<br>
 ![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.31%20PM.png)
- </li>
-<li> Entering user id<br>
+
+Entering user id<br>
 ![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.45%20PM.png)
  </li>
 <li>For first instance of program, answer 'y'<br>
