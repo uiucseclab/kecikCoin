@@ -13,7 +13,7 @@ This blockchain is developed by Nurul Atiqah Hamzah (hamzah3) and Izz Irfan (moh
 
 ## Installation Dependencies
 ----------
-Pycrypto
+Pycrypto <br>
 Python 2.7
 
 ## Usage
@@ -22,11 +22,11 @@ The blockchain can operate with a maximum of five machines, in which each of the
 
 This blockchain requires bring up a peer with port 6000 open as this peer will be the introducer node that can bring other nodes and users into the kecikCoin network. 
 
-Each machine can start each node by running:
+Each machine can start each node by running:<br>
 python block_client.py
 
-To make port 6000 a peer:
-At the kecikCoin console: type 'peer'
+To make port 6000 a peer: <br>
+At the kecikCoin console: type 'peer'<br>
 Once prompted, put in: $ip_addr:6000
 
 
