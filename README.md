@@ -70,10 +70,35 @@ The different commands that you can put into kecikCoinClient console is:
 
 ## Demo Pictures
 ----------
-### 1. Running block_client.py
-------
+<ol>
+ <li> Running 'python block_client.py'<br>
 ![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.31%20PM.png)
- 
+ </li>
+<li> Entering user id<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.45%20PM.png)
+ </li>
+<li>For first instance of program, answer 'y'<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.25.59%20PM.png)
+ </li>
+<li>Enter networking info in form of $ip:6000 for first instance<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.26.19%20PM.png)
+ </li> 
+ <li>A different instance of the client can be initiated with a different port and must be followed with 'join' to join network<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.39.57%20PM.png)
+ </li>
+  <li>Mining a block<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.40.31%20PM.png)
+ </li>
+   <li>Displaying blocks<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.40.44%20PM.png)
+ </li>
+   <li>Making a transaction<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.41.00%20PM.png)
+ </li>
+    <li>Checking funds of user<br>
+![Screen](https://github.com/atiqahhhamzah/cs460_bchain/blob/master/demo_pics/Screen%20Shot%202018-05-02%20at%205.41.42%20PM.png)
+  </li>  
+ </ol>
 ## How it Works
 ----------
 The following is a breakdown of what each aspect of the project accomplishes. 
