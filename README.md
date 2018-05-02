@@ -9,6 +9,8 @@ The main purpose of kecikCoin blockchain is to emulate a small scale non-persist
   <li>RSA signed transactions</li>
 </ul>
 
+Most of the networking done in this blockchain is done through socket programming on ip addresses and ports. All the messages are routed in TCP-packets to ensure reliability of connection.
+
 This blockchain is developed by Nurul Atiqah Hamzah (hamzah3) and Izz Irfan (mohdfau2) [May 2018]
 
 ## Installation Dependencies
@@ -35,17 +37,17 @@ Once you start up another peer server on a different port by typing 'peer' into 
 
 The different commands that you can put into kecikCoinClient console is:
 <ul>
-<li>get_blocks<br>-Get blocks from the server and print the content of each</li>
+<li>get_blocks<br>Get blocks from the server and print the content of each</li>
   
-<li>funds<br>-Get funds from the server and put into user class</li>
+<li>funds<br>Get funds from the server and put into user class</li>
 
-<li>mine<br>-Mine a block from the server</li>
+<li>mine<br>Mine a block from the server</li>
 
-<li>transaction<br>-Make a transaction to send funds to another user</li>
+<li>transaction<br>Make a transaction to send funds to another user</li>
 
-<li>exit/quit<br>-Get out of the program</li>
+<li>exit/quit<br>Get out of the program</li>
 
-<li>debug<br>-Toggle networking debugging on and off. When turned on, since networking working works on a different thread, don't worry if the kecikCoin console prompt appears elsewhere or glitchy, you can still enter commands</li>
+<li>debug<br>Toggle networking debugging on and off. When turned on, since networking working works on a different thread, don't worry if the kecikCoin console prompt appears elsewhere or glitchy, you can still enter commands</li>
 </ul>
 
 
@@ -55,10 +57,12 @@ The following is a breakdown of what each aspect of the project accomplishes.
 
 ### 1. block_client.py
 ------
-nyot nyot
+This our main program that runs a while loop to prompt for commands. Most of the commands that are entered will then send an AES-encrypted message that is contained in json for easy parsing to the server (or peer machine). It acts as both a user client and peer client so it is not necessary to open up a peer machine in the client (unless you are port 6000).
+
 
 ### 2. block_user.py
 ------
+
 
 
 ### 3. block_network.py
