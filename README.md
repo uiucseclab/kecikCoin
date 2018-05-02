@@ -22,7 +22,7 @@ Caution: It was developed on MacOS so for a smoother experience, use a mac termi
 
 The blockchain can operate with a maximum of five machines, in which each of the five machines are designated with a specific user and can become a peer machine. For easy debugging or simulation purposes, you can just bring up all machines on localhost and designate each peer with a different port.
 
-This blockchain requires bring up a peer with port 6000 open as this peer will be the introducer node that can bring other nodes and users into the kecikCoin network. 
+This blockchain requires that peer with port 6000 open is up at all times as this peer will be the introducer node that can bring other nodes and users into the kecikCoin network. 
 
 Each machine can start each node by running:<br>
 python block_client.py
