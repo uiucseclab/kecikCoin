@@ -41,8 +41,12 @@ The different commands that you can put into kecikCoinClient console is:
 
 <li>mine<br>-Mine a block from the server</li>
 
- <li>transaction<br>-Make a transaction to send funds to another user</li>
- </ul>
+<li>transaction<br>-Make a transaction to send funds to another user</li>
+
+<li>exit/quit<br>-Get out of the program</li>
+
+<li>debug<br>-Toggle networking debugging on and off. When turned on, since networking working works on a different thread, don't worry if the kecikCoin console prompt appears elsewhere or glitchy, you can still enter commands</li>
+</ul>
 
 
 ## How it Works
