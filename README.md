@@ -9,6 +9,8 @@ The main purpose of kecikCoin blockchain is to emulate a small scale non-persist
   <li>RSA signed transactions</li>
 </ul>
 
+As of now, the proof of work is simple enough such that it is easy to mine coins. This helps us to debug as we don't have to wait for a period of time to get a mined block. Obviously, in a real world blockchain, this is not the case!
+
 Most of the networking done in this blockchain is done through socket programming on ip addresses and ports. All the messages are routed in TCP-packets to ensure reliability of connection.
 
 This blockchain is developed by Nurul Atiqah Hamzah (hamzah3) and Izz Irfan (mohdfau2) [May 2018]
@@ -37,6 +39,10 @@ Once you start up another peer server on a different port by typing 'peer' into 
 
 The different commands that you can put into kecikCoinClient console is:
 <ul>
+<li>peer<br>Set up a new peer server</li>
+  
+<li>join<br>Once a peer server is set up, have the peer join the kecikCoin network</li>
+  
 <li>get_blocks<br>Get blocks from the server and print the content of each</li>
   
 <li>funds<br>Get funds from the server and put into user class</li>
@@ -57,18 +63,23 @@ The following is a breakdown of what each aspect of the project accomplishes.
 
 ### 1. block_client.py
 ------
-This our main program that runs a while loop to prompt for commands. Most of the commands that are entered will then send an AES-encrypted message that is contained in json for easy parsing to the server (or peer machine). It acts as both a user client and peer client so it is not necessary to open up a peer machine in the client (unless you are port 6000).
-
+This our main program that runs a while loop to prompt for commands. Most of the commands that are entered will then send an AES-encrypted message that is contained in json for easy parsing to the server (or peer machine). It acts as both a user client and peer client so it is not necessary to open up a peer machine in the client (unless you are port 6000). This is also the main code that handles user related functions such as signing up as a user, checking funds, making transactions and mining blocks.
 
 ### 2. block_user.py
 ------
-
-
+This contains our class declaration of kecikUser where funds and the last block index are recorded. The kecikUser has two functions for encrypting and decrypting the RSA encrypted signatures for transactions.
 
 ### 3. block_network.py
 ------
+This file contains our class declaration of KecikNode which contains the running commandListener server thread that handles all the incoming requests from peers and users. This class also holds user information in the form key,value dictionaries for userid and their public keys and also the network's list of peers. 
+
+There is also a consensus function that prompts other nodes to send their blockchains and does a length comparison between their blockchains and node's current blockchain. Once, the longest blockchain is selected, it goes through a validation function that tests each block's hash to ensure that each block has a prev_hash that matches the hash of the block with an index below them. Once validation is completed, the blockchain is updated with the new blockchain.
+
+If a user makes a transaction, the transactions are kept in a list contained within the node. However, the transactions do not become 'official' until the transactions are published in a block that has been mined.
+
+If a user mines a block, all the transactions kept in the node are collected and a proof-of-work algorithm is ran to completion. Once the proof-of-work is done, the value that is output is recorded along with the current list of transactions inside the data section of the block that is newly mined. The new block is then added to the peer's blockchain. Lastly, the consensus function is called to ensure that all peers have the same blockchain.
 
 
 ### 4. block.py
 ------
- 
+This contain the class declarations of Block and Blockchain which contain different functions for constructing the blockchain, block, printing it out, copying the block or blockchain and many other necessary functions.
