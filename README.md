@@ -72,7 +72,7 @@ The different commands that you can put into kecikCoinClient console is:
 ----------
 ### 1. Running block_client.py
 ------
- ![1](demo_pics/Screen Shot 2018-05-02 at 5.25.31 PM.png?)
+ ![1](/demo_pics/Screen Shot 2018-05-02 at 5.25.31 PM.png?)
  
 ## How it Works
 ----------
