@@ -15,6 +15,18 @@ Most of the networking done in this blockchain is done through socket programmin
 
 This blockchain is developed by Nurul Atiqah Hamzah (hamzah3) and Izz Irfan (mohdfau2) [May 2018]
 
+## Research and Future Additions That Could Have Been Added
+----------
+
+A lot of time and research had been put into deciding how this blockchain would turn out and this section would detail the security implementations that we learned about that we did not implement in our blockchain either due to time limitation, complexity or being beyond the scope of our project. 
+
+### 1. Stealth Addresses
+In our research, we came across a new implementation of public and private keys for transactions in Blockchain that implemented the Diffie-Hilman key exchange algorithm to generate a one time secret key for each transaction. Because the secret key is different for each transaction, this helps prevent anybody from being to trace the transactions of a specific user despite the blockchain being a public ledger.
+
+### 2. RingCT
+We came across MONERO coin that implemented ring signature based transactions in which a transaction from a certain user would actually be consisted of other transactions (from a group of users referred to as the ring). This way, it hides the transaction of the user from the other users when they scan the blockchain.
+
+
 ## Installation Dependencies
 ----------
 Pycrypto <br> 
@@ -58,7 +70,7 @@ The different commands that you can put into kecikCoinClient console is:
 
 
 ## How it Works
-------
+----------
 The following is a breakdown of what each aspect of the project accomplishes. 
 
 ### 1. block_client.py
@@ -66,11 +78,11 @@ The following is a breakdown of what each aspect of the project accomplishes.
 This our main program that runs a while loop to prompt for commands. Most of the commands that are entered will then send an AES-encrypted message that is contained in json for easy parsing to the server (or peer machine). It acts as both a user client and peer client so it is not necessary to open up a peer machine in the client (unless you are port 6000). This is also the main code that handles user related functions such as signing up as a user, checking funds, making transactions and mining blocks.
 
 ### 2. block_user.py
-------
+----------
 This contains our class declaration of kecikUser where funds and the last block index are recorded. The kecikUser has two functions for encrypting and decrypting the RSA encrypted signatures for transactions.
 
 ### 3. block_network.py
-------
+----------
 This file contains our class declaration of KecikNode which contains the running commandListener server thread that handles all the incoming requests from peers and users. This class also holds user information in the form key,value dictionaries for userid and their public keys and also the network's list of peers. 
 
 There is also a consensus function that prompts other nodes to send their blockchains and does a length comparison between their blockchains and node's current blockchain. Once, the longest blockchain is selected, it goes through a validation function that tests each block's hash to ensure that each block has a prev_hash that matches the hash of the block with an index below them. Once validation is completed, the blockchain is updated with the new blockchain.
@@ -81,5 +93,5 @@ If a user mines a block, all the transactions kept in the node are collected and
 
 
 ### 4. block.py
-------
+----------
 This contain the class declarations of Block and Blockchain which contain different functions for constructing the blockchain, block, printing it out, copying the block or blockchain and many other necessary functions.
