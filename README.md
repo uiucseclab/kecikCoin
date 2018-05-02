@@ -68,11 +68,12 @@ The different commands that you can put into kecikCoinClient console is:
 <li>debug<br>Toggle networking debugging on and off. When turned on, since network working works on a different thread, don't worry if the kecikCoin console prompt appears elsewhere or glitchy, you can still enter commands</li>
 </ul>
 
-## Demo Pics
+## Demo Pictures
 ----------
 ### 1. Running block_client.py
 ------
- ![1](Screen Shot 2018-05-02 at 5.25.31 PM.png?)
+![first](Screen Shot 2018-05-02 at 5.25.31 PM.png?raw=true "Running block_client.py")
+ demo_pics/Screen Shot 2018-05-02 at 5.25.31 PM.png
  
 ## How it Works
 ----------
