@@ -54,9 +54,12 @@ class kecikNode:
 		self.node_transactions = []
 		self.blockchain = Blockchain()
 		self.blockchain.populateBlockChain()
+		self.debug = False
 		print "\nGenesis block #{} initialized at {}:{}".format(self.blockchain.getCurrBlock().index, self.host, self.port)	
 		print "Hash: {}\n".format(self.blockchain.getCurrBlock().hash)
 
+	def setDebug():
+		self.debug = True
 
 	def commandHandler(self, client, addr):
 		while True:
@@ -68,7 +71,7 @@ class kecikNode:
 			clientHostName = socket.gethostbyaddr(addr[0])[0]
 
 			#Print out command entries
-			print >>sys.stderr, "Received message from %s: %s\n" % (addr[0], commandMsg)
+			if(self.debug)print >>sys.stderr, "Received message from %s: %s\n" % (addr[0], commandMsg)
 
 			#if received join command, add to peer list and send blocks
 			if(commandMsg['request'] == 'get_blocks'):
@@ -113,7 +116,7 @@ class kecikNode:
 						new_blockchain.append(Block(b['index'],b['timestamp'],b['data'],b['prev_hash'],copy=True,hashvalue=b['hash']))
 					if self.blockchain.validateChain(new_blockchain) == True:
 						self.blockchain.updateBlockChain(new_blockchain)
-						print "Updated blockchain with longest chain"
+						if(self.debug)print "Updated blockchain with longest chain"
 					client.close()
 					return
 			elif (commandMsg['type'] == 'client'):
