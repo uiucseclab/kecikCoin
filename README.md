@@ -31,19 +31,18 @@ To make port 6000 a peer: <br>
 At the kecikCoin console: type 'peer'<br>
 Once prompted, put in: $ip_addr:6000
 
+Once you start up another peer server on a different port by typing 'peer' into the console and designating the desired ip and port by entering $ip_addr:$port at the prompt, you can join the kecikCoin network by entering 'join' in the console.
+
 The different commands that you can put into kecikCoinClient console is:
+<ul>
+<li>get_blocks<br>-Get blocks from the server and print the content of each</li>
+  
+<li>funds<br>-Get funds from the server and put into user class</li>
 
-###get_blocks
-####Get blocks from the server and print the content of each
+<li>mine<br>-Mine a block from the server</li>
 
-###funds
-####Get funds from the server and put into user class
-
-###mine
-####Mine a block from the server
-
-###transaction
-####Make a transaction to send funds to another user
+ <li>transaction<br>-Make a transaction to send funds to another user</li>
+ </ul>
 
 
 ## How it Works
