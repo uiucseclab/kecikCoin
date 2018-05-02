@@ -21,11 +21,14 @@ class Block:
 		return hashlib.sha256(str(self.index)+str(self.data)+str(self.timestamp)+str(self.prev_hash)).hexdigest()
 		
 	def printBlock(self):
-		print "BLOCK #{}".format(self.index)
+		print "\nBLOCK #{}".format(self.index)
 		print "Index : {}".format(self.index)
 		print "Data : {}".format(self.data)
 		print "Timestamp : {}".format(self.timestamp)
-		print "Hash : {}".format(self.hash)
+		print "Hash : {}\n".format(self.hash)
+
+	def blockToDict(self):
+		return {'index':self.index, 'timestamp': self.timestamp, 'data':self.data,'prev_hash':self.prev_hash,'hash':self.hash}
 
 
 class Blockchain:
@@ -62,11 +65,17 @@ class Blockchain:
 		self.length += 1
 
 	# Chain validation
-	def validateChain(self):
+	def validateChain(self,chain):
 		for i in range(self.length - 1):
-			currentHash = self.blockchain[i]
-			next_block_prevHash = self.blockchain[i+1].prev_hash
+			currentHash = chain[i]
+			next_block_prevHash = chain[i+1].prev_hash
 			if currentHash != next_block_prevHash:
 				return False;
 		return True;
+
+	def blockChainToDictList(self):
+		dictList = []
+		for b in self.blockchain:
+			dictList.append(b.blockToDict())
+		return dictList
 

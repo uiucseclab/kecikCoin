@@ -7,14 +7,25 @@ import sys
 import argparse
 from uuid import getnode as get_mac
 import threading
+from Crypto.Cipher import AES
+import random
+
+key = ['b', '1', '\xc7', '&', '\xf2', '\xc4', 'Z', 'J', '8', '\x08', '&', '\x85', '\x85', '\x92', '\xfc', '=']
+iv = ['J', '\x8c', '\x00', '\xa4', '\x17', '\xab', 'n', '\x82', '\x92', ':', '[', '\x0f', 'K', '\xc2', '\x88', '\xbf']
+aes_key = ''.join(key)
+aes_iv = ''.join(iv)
+pad = lambda s: s + (16 - len(s) % 16) * chr(16 - len(s) % 16)
+unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 def encodeMsg(msg):
-		retmsg = json.JSONEncoder().encode(msg)
-		return retmsg
+	retmsg = json.JSONEncoder().encode(msg)
+	aes_msg = AES.new(aes_key, AES.MODE_CBC, aes_iv).encrypt(pad(retmsg))
+	return aes_msg
 	# decode the recieved string into a json dict
 def decodeMsg(msg):
-		received = json.loads(msg)
-		return received
+	aes_msg = unpad(AES.new(aes_key, AES.MODE_CBC,aes_iv).decrypt(msg))
+	received = json.loads(aes_msg)
+	return received
 
 def getMiningAddress(host = '',port = ''):
 	sha = hashlib.sha256()
@@ -34,9 +45,12 @@ class kecikNode:
 		self.host = host
 		self.ip = host
 		self.port = port
+		self.timestamp = time.time()
 		self.kecik_addr = getMiningAddress(host = host, port = port)
 		self.alive = True
 		self.peers = dict()
+		self.peers[self.kecik_addr] = (self.ip,self.port)
+		self.users = dict()
 		self.node_transactions = []
 		self.blockchain = Blockchain()
 		self.blockchain.populateBlockChain()
@@ -47,35 +61,61 @@ class kecikNode:
 	def commandHandler(self, client, addr):
 		while True:
 			# Decode command msg
-			command = client.recv(1024)
+			command = client.recv(4096)
 			commandMsg = decodeMsg(command)
 
 			#Check if client is in peer list or peer wants to join
 			clientHostName = socket.gethostbyaddr(addr[0])[0]
-			found = 0
-			for key,value in self.peers.iteritems():
-				print key
-				if key.find(clientHostName) != -1:
-					found+=1
-			if found == 0 and (commandMsg['request'] != 'join' and commandMsg['type'] == 'peer'):
-				print >>sys.stderr, "%s not in peer list" %clientHostName
-				client.close()
-				return
 
 			#Print out command entries
 			print >>sys.stderr, "Received message from %s: %s\n" % (addr[0], commandMsg)
 
 			#if received join command, add to peer list and send blocks
-			if(commandMsg['type'] == 'peer'):
+			if(commandMsg['request'] == 'get_blocks'):
+				self.consensus()
+				msg = {'ack':self.blockchain.blockChainToDictList()}
+				client.send(encodeMsg(msg))
+				client.close()
+				return
+			elif (commandMsg['request'] == 'funds'):
+				self.consensus()
+				userid = str(commandMsg['body'])
+				coins = 0
+				for b in self.blockchain.getBlockChain():
+					for t in b.data['transactions']:
+						if t['to'] == userid:
+							coins += t['amount']
+						elif t['from'] == userid:
+							coins -= t['amount']
+				msg = {'ack': (coins, len(self.blockchain.blockchain) - 1)}
+				client.send(encodeMsg(msg))
+				client.close()
+				return
+			elif(commandMsg['type'] == 'peer'):
 				if (commandMsg['request'] == 'join'):
-					client.send(encodeMsg("OK"))
+					ackMsg = encodeMsg({'peers':self.peers,'users':self.users})
+					client.send(ackMsg)
+					client.close()
+					return
+				elif(commandMsg['request'] == 'join_r2'):
+					self.peers[str(commandMsg['body']['peer']['addr'])] = commandMsg['body']['peer']['ipport']
+					self.consensus()
 					client.close()
 					return
 				elif(commandMsg['request'] == 'consensus'):
-					client.send("OK")
+					msg = {'ack':self.blockchain.blockChainToDictList()}
+					client.send(encodeMsg(msg))
 					client.close()
 					return
-
+				elif(commandMsg['request'] == 'consensus_r2'):
+					new_blockchain = []
+					for b in commandMsg['body']:
+						new_blockchain.append(Block(b['index'],b['timestamp'],b['data'],b['prev_hash'],copy=True,hashvalue=b['hash']))
+					if self.blockchain.validateChain(new_blockchain) == True:
+						self.blockchain.updateBlockChain(new_blockchain)
+						print "Updated blockchain with longest chain"
+					client.close()
+					return
 			elif (commandMsg['type'] == 'client'):
 				if(commandMsg['request'] == 'transaction'):
 					new_transaction = commandMsg['body']
@@ -100,9 +140,13 @@ class kecikNode:
 					msg = {'ack':{'index': new_block_index, 'timestamp': mined_block.timestamp, 'data': new_block_data, 
 								  'prev_hash': mined_block.prev_hash, 'hash': mined_block.hash}}
 					client.send(encodeMsg(msg))
+					self.consensus()
 					client.close()
 					return
-
+				elif(commandMsg['request'] == 'add_user'):
+					self.users[commandMsg['body']['user']] = commandMsg['body']['pubkey']
+					client.close()
+					return
 
 		print >>sys.stderr, "Unknown command message"
 		client.close()
@@ -128,6 +172,46 @@ class kecikNode:
 		self.listener.close()
 		print >>sys.stderr, ("Closing up command listener")
 
+	def consensus(self):
+		print "Starting consensus algorithm"
+		longest_chain = self.blockchain.getBlockChain()
+		peer_chains = []
+		for key,peer in self.peers.iteritems():
+			if key != self.kecik_addr:
+				msg = encodeMsg({'type': 'peer','request':'consensus'})
+				try:
+					sock = socket.create_connection(peer)
+				except:
+					print "No such peer with host and port"
+					return
+				sock.sendall(msg)
+				ack = decodeMsg(sock.recv(4096))
+				peer_chains.append(ack['ack'])
+
+		for chain in peer_chains:
+			if(len(chain) > len(longest_chain)):
+				longest_chain = chain
+
+		if(longest_chain != self.blockchain.getBlockChain()):
+			new_blockchain = []
+			for b in longest_chain:
+				new_block = Block(b['index'],b['timestamp'],b['data'],b['prev_hash'],copy = True, hashvalue = b['hash'])
+				new_blockchain.append(Block(b['index'],b['timestamp'],b['data'],b['prev_hash'],copy=True,hashvalue=b['hash']))
+
+			if self.blockchain.validateChain(new_blockchain) == True:
+				self.blockchain.updateBlockChain(new_blockchain)
+				print "Update blockchain with longest chain"
+
+		for key,peer in self.peers.iteritems():
+			if key != self.kecik_addr:
+				msg = encodeMsg({'type': 'peer','request':'consensus_r2','body': self.blockchain.blockChainToDictList()})
+				try:
+					sock = socket.create_connection(peer)
+				except:
+					print "No such peer with host and port"
+					return
+				sock.sendall(msg)
+
 
 def proofOfWork(prev_proof):
 	i = prev_proof + 1
@@ -149,40 +233,6 @@ def getOtherBlocks():
 			"hash": b.hash
 			})
 			return json.dumps(blockchain_dictlist)
-
-
-def consensus():
-	global blockchain
-	cur_longest_chain = blockchain.getBlockChain()
-
-	peer_chains = []
-	for peer in peer_list():
-		req_response = requests.get("https://%s/blockchain" % peer)
-		if (req_response.status_code == requests.codes.ok):
-			print "Blocks from peer {}: {}\n".format(peer,req_response.content())
-			peer_chains.append(json.loads(req_response.content()))
-
-	for chain in peer_chains:
-		if len(peer_chain) > cur_longest_chain:
-			cur_longest_chain = peer_chain
-
-	if(cur_longest_chain != blockchain.getBlockChain()):
-		new_blockchain = []
-		for block in cur_longest_chain:
-			new_blockchain.append(Block(block['index'],block['timestamp'],block['prev_hash'],block['hash']))
-
-		if blockchain.validateChain(new_blockchain) == True:
-			blockchain.updateBlockChain(new_blockchain)
-
-	return blockchain.getBlockChain()
-
-
-def addPeer():
-	if request.method == 'GET':
-		host = request.get_json()['host']
-		port = request.get_json()['port']
-		peer_list.append(str(host + ':' + port))
-		print "Added {} as peer".format(host)
 
 
 
