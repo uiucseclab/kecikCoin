@@ -37,6 +37,7 @@ Proof of work is a piece of data which is difficult (costly, time-consuming) to 
 ## Installation Dependencies
 ----------
 Pycrypto <br> 
+ecdsa
 Python 2.7
 
 ## Usage
