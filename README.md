@@ -30,6 +30,9 @@ In our research, we came across a new implementation of public and private keys 
 ### 2. RingCT
 We came across MONERO coin that implemented ring signature based transactions in which a transaction from a certain user would actually be consisted of other transactions (from a group of users referred to as the ring). This way, it hides the transaction of the user from the other users when they scan the blockchain.
 
+### 3. Complex Proof of Work/Stake
+Proof of work is a piece of data which is difficult (costly, time-consuming) to produce but easy for others to verify and which satisfies certain requirements. On the other nad, Proof of Stake is a different way to validate transactions based and achieve the distributed consensus. Producing a proof of work/stake that can handle issues relating to distributed systems are a mounting task we both did not have enough knowledge/time to execute. We also realize that Proof of Work/Stake have a very large potential to be researched and analyze for the security and performance implication of various consensus and network parameter of PoW/S blockchains. 
+
 
 ## Installation Dependencies
 ----------
