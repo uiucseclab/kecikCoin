@@ -6,7 +6,7 @@ The main purpose of KecikCoin blockchain is to emulate a small scale non-persist
   <li>Proof-of-work algorithm</li>
   <li>AES encrypted network traffic</li>
   <li>SHA256 Hash pointers for the blocks in the blockchain for blockchain validation</li>
-  <li>RSA signed transactions</li>
+  <li>ECDSA signed transactions</li>
 </ul>
 
 
