@@ -1,7 +1,7 @@
 from block_network import * 
 import hashlib
 import base64
-from ecdsa import SigningKey, NIST384p, VerifyingKey, NIST256p
+from ecdsa import SigningKey, VerifyingKey, NIST256p
 
 # kecikUser class
 class KecikUser:
@@ -28,11 +28,11 @@ class KecikUser:
 	# Signing message with privkey function
 	def sign_msg(self,msg):
 		hashed_msg = hashlib.sha256(str(msg)).hexdigest()
-		sign_key.from_pem(self.privkey,curve = NIST256p)
-		return sign_key.sign(hashed_msg)
+		sign_key = SigningKey.from_pem(self.privkey)
+		return str(sign_key.sign(hashed_msg)).decode('utf-16').encode('utf-8')
 
 	# Decrypting message with pubkey function
 	def unsign_msg(self,msg,sign,publickey):
 		hashed_msg = hashlib.sha256(str(msg['from']) + str(msg['to']) + str(msg['amount'])).hexdigest()
-		pubkey = VerifyingKey.from_pem(publickey,curve=NIST256p)
+		pubkey = VerifyingKey.from_pem(publickey)
 		return pubkey.verify(sign,msg)
