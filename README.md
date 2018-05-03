@@ -8,7 +8,10 @@ The main purpose of KecikCoin blockchain is to emulate a small scale non-persist
   <li>SHA256 Hash pointers for the blocks in the blockchain for blockchain validation</li>
   <li>RSA signed transactions</li>
 </ul>
+
+
 We both decided to choose this topic due to the ongoing demand of blockchain technology. By building KecikCoin, we've understand the underlaying mechanism of how these blocks are structured and find security vulnerabilities that comes with it. Throughout this project we've realize that problems relating to distributed systems (consensus, byzantine failures & fault tolerance, paxos) are the biggest security threat about this technology. 
+
 
 As of now, the proof of work is simple enough such that it is easy to mine coins. This helps us to debug as we don't have to wait for a period of time to get a mined block. Obviously, in a real world blockchain, this is not the case!
 
