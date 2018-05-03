@@ -34,7 +34,7 @@ def checkfunds(userid):
 		print "No such peer with host and port"
 		return
 	sock.sendall(msg)
-	ack = sock.recv(1024)
+	ack = sock.recv(4096)
 	receivedmsg = decodeMsg(ack)['ack']
 
 	# Get coins from tuple
@@ -64,7 +64,7 @@ def mine(mineraddr):
 
 	# Send the message
 	sock.sendall(msg)
-	ack = sock.recv(1024)
+	ack = sock.recv(4096)
 
 	# Decode Message
 	receivedmsg = decodeMsg(ack)['ack']
@@ -211,7 +211,7 @@ def main():
 							return
 
 						sock.sendall(msg)
-						ack = decodeMsg(sock.recv(1024))
+						ack = decodeMsg(sock.recv(4096))
 
 						# Once receive peer dictionary list, parse
 						for k,v in ack['peers'].iteritems():

@@ -1,12 +1,7 @@
-from block_network import *
-import socket
-import random
-import threading
-import Crypto
-from Crypto.PublicKey import RSA
-from Crypto import Random
-import thread
+from block_network import * 
 import hashlib
+import base64
+from ecdsa import SigningKey, NIST384p, VerifyingKey, NIST256p
 
 # kecikUser class
 class KecikUser:
@@ -17,26 +12,27 @@ class KecikUser:
 		self.coins =  0
 		self.blockindex = 0
 		keys = self.publicprivateKeygen()
-		self.pubkey = keys[1]
-		self.privkey = keys[0]
+		self.privkey= str(keys[0])
+		self.pubkey = str(keys[1])
+	
 
 	# RSA Key generator
 	def publicprivateKeygen(self):
-		random_gen = Random.new().read
-		key = RSA.generate(1024, random_gen)
-		keys = (key, key.publickey().exportKey('PEM'))
+		prkey = SigningKey.generate(curve=NIST256p)
+		prkey_string = prkey.to_pem()
+		pubkey = prkey.get_verifying_key()
+		pubkey_string = pubkey.to_pem()
+		keys = (prkey_string,pubkey_string)
 		return keys
 
 	# Signing message with privkey function
 	def sign_msg(self,msg):
 		hashed_msg = hashlib.sha256(str(msg)).hexdigest()
-		return self.privkey.encrypt(hashed_msg,32)
+		sign_key.from_pem(self.privkey,curve = NIST256p)
+		return sign_key.sign(hashed_msg)
 
 	# Decrypting message with pubkey function
 	def unsign_msg(self,msg,sign,publickey):
 		hashed_msg = hashlib.sha256(str(msg['from']) + str(msg['to']) + str(msg['amount'])).hexdigest()
-		pubkey = RSA.importKey(publickey,passphrase="PEM")
-		if publickey.decrypt(sign) == hashed_msg:
-			return True
-		else:
-			return False
+		pubkey = VerifyingKey.from_pem(publickey,curve=NIST256p)
+		return pubkey.verify(sign,msg)
